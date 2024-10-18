@@ -1,5 +1,3 @@
-import re
-
 nums_dict = {
         "zero": "0", "one": "1",
         "two": "2", "three": "3",
@@ -8,54 +6,39 @@ nums_dict = {
         "eight": "8", "nine": "9"
     }
 
-nums_keys = ['nine', 'eight', 'seven', 'six', 'five',
-             'four', 'three', 'two', 'one', 'zero']
+nums_keys = nums_dict.keys()
 
 def main():
     sum = 0
     with open('input.txt', 'r') as f:
         for line in f:
-            print(line.strip('\n'))
             sum += get_calibration(line.strip('\n'))
     print(sum)
 
+
 def get_calibration(line):
     digits = get_digits(line)
-    print(digits)
     return int(digits[0] + digits[-1])
 
 
 def get_digits(line):
     digits = []
+    cur_str = ''
 
-    #8shoneight
-    broken_arr = re.split(r'(\d)', line)
-    #[8, shoneight]
-    for i in broken_arr:
-        if i.isdigit():
-            digits.append(i)
-        elif i in nums_keys:
-            digits.append(nums_dict.get(i))
-
+    for letter in line:
+        letter = letter.lower()
+        if letter.isdigit():
+            digits.append(letter)
+            cur_str = ''
         else:
-            j = 0
-            while i:
-                if nums_keys[j] in i:
-                    digits.append(nums_dict.get(nums_keys[j]))
-                    i = i.replace(nums_keys[j], "", 1)
-                j += 1
-                if j > 9:
-                    break
+            cur_str += letter
 
-
-
-    
-
-        
+        for key in nums_keys:
+            if cur_str.endswith(key):
+                digits.append(nums_dict.get(key))
+                break
 
     return digits
-
-
 
 
 if __name__ == "__main__":
