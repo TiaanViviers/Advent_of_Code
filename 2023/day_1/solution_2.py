@@ -8,7 +8,8 @@ nums_dict = {
         "eight": "8", "nine": "9"
     }
 
-nums_keys = ['nine', 'eight', 'seven', 'six', 'five', 'four', 'three', 'two', 'one', 'zero']
+nums_keys = ['nine', 'eight', 'seven', 'six', 'five',
+             'four', 'three', 'two', 'one', 'zero']
 
 def main():
     sum = 0
@@ -41,10 +42,8 @@ def get_digits(line):
             while i:
                 if nums_keys[j] in i:
                     digits.append(nums_dict.get(nums_keys[j]))
-                    i = i.replace(nums_keys[j], "")
-                
+                    i = i.replace(nums_keys[j], "", 1)
                 j += 1
-                
                 if j > 9:
                     break
 
