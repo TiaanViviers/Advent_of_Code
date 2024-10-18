@@ -1,3 +1,5 @@
+import re
+
 nums_dict = {
         "zero": "0", "one": "1",
         "two": "2", "three": "3",
@@ -6,7 +8,7 @@ nums_dict = {
         "eight": "8", "nine": "9"
     }
 
-nums_keys = nums_dict.keys()
+nums_keys = ['nine', 'eight', 'seven', 'six', 'five', 'four', 'three', 'two', 'one', 'zero']
 
 def main():
     sum = 0
@@ -24,21 +26,33 @@ def get_calibration(line):
 
 def get_digits(line):
     digits = []
-    cur_str = ''
 
-    for letter in line:
-        letter = letter.lower()
-        if letter.isdigit():
-            digits.append(letter)
-            cur_str = ''
+    #8shoneight
+    broken_arr = re.split(r'(\d)', line)
+    #[8, shoneight]
+    for i in broken_arr:
+        if i.isdigit():
+            digits.append(i)
+        elif i in nums_keys:
+            digits.append(nums_dict.get(i))
+
         else:
-            cur_str += letter
+            j = 0
+            while i:
+                if nums_keys[j] in i:
+                    digits.append(nums_dict.get(nums_keys[j]))
+                    i = i.replace(nums_keys[j], "")
+                
+                j += 1
+                
+                if j > 9:
+                    break
 
-        for key in nums_keys:
-            if cur_str.startswith(key) or cur_str.endswith(key):
-                digits.append(nums_dict.get(key))
-                cur_str = ''
-                break
+
+
+    
+
+        
 
     return digits
 
