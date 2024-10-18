@@ -2,7 +2,7 @@ from re import findall
 
 def main():
     sum = 0
-    f = open('input_1.txt', 'r')
+    f = open('input.txt', 'r')
     for line in f:
         sum += int(get_calibration(line))
     print(sum)
