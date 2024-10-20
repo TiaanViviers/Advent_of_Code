@@ -60,6 +60,7 @@ def main():
     f = open('input.txt', 'r')
     for line in f:
         sum += valid_game_num(line.strip('\n'))
+    f.close()
     print(sum)
 
 

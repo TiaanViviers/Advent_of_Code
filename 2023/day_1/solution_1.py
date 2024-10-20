@@ -5,6 +5,7 @@ def main():
     f = open('input.txt', 'r')
     for line in f:
         sum += int(get_calibration(line))
+    f.close()
     print(sum)
 
 def get_calibration(line):
