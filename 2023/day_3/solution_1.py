@@ -1,22 +1,6 @@
 
 def get_sum(input):
-    num_map, sym_map = get_maps(input)
-
-    #use sym_map to search for nums in num_map
-
-#TODO fix building maps, switch to int iteration 
-def get_maps(input):
-    num_map = {}
-    sym_map = {}
-    cur_num = ''
-
-    for row in input:
-        for col in row:
-            if col.isdigit():
-                while col.isdigit():
-                    cur_num += col
-                    col += 1          #ERRROR!!! col is str cant add 1
-            print(cur_num)
+    pass
 
 
 
@@ -25,6 +9,25 @@ def main():
     input = f.read().split('\n')
     f.close()
     print(get_sum(input))
+
+
+class Numbers:
+    def __init__(self, num, row, end_col, row_len):
+        self.number = num
+        self.row = row
+        self.end_col = end_col
+        self.start_col = end_col - len(num)
+        self.row_len = row_len
+        self.neighbors = self.get_neighbors()
+
+    def get_neighbors(self):
+        n = []
+        #get top neighbors
+
+        #get inline neighbors
+        if self.start_col > 0 and self.end_col < self.row_len:
+            n.append((self))
+        #get bottom neighbors
 
 
 if __name__ == "__main__":
