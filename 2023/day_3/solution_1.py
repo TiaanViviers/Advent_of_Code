@@ -1,120 +1,163 @@
-
-def get_sum(input):
-    parts = []
-
-    i = 0 
-    while i < len(input):
-        j = 0
-        while j < len(input[i]):
-            cur_num = ''
-            while ord(input[i][j]) in range(48, 58):
-                cur_num += input[i][j]
-                #last element
-                if (i == len(input)-1) and (j == len(input[i])-1):
-                    break
-                #increment row
-                if i < len(input) - 1 and j == len(input[i]) - 1:
-                    i += 1
-                    j = 0
-                #increment col
-                if j < len(input[i]) - 1:
-                    j += 1
-
-            if cur_num:
-                possible_part = Numbers(cur_num, i, j, len(input)-1, len(input[i])-1)
-                neighbors = possible_part.get_neighbors()
-                if valid_part(neighbors, input):
-                    parts.append(int(cur_num))
-            
-        #increment iterators
-            if j == len(input[i]) - 1:
-                break
-            else: j += 1
-        if i == len(input)-1:
-            break
-        else: i += 1
-
-    print(parts)
-    return sum(parts)
-
-
-def valid_part(neighbors, input):
-    for row, col in neighbors:
-        print(f"{row},  {col}")
-        print(f"element: {input[row][col]}")
-        if input[row][col] != '.':
-            return True
-        
-    return False
-
-
 def main():
-    f = open('subset.txt', 'r')
+    f = open('input.txt', 'r')
     input = f.read().split('\n')
     f.close()
     print(get_sum(input))
 
 
-class Numbers:
-    def __init__(self, num, row, end_col, row_len, col_len):
-        self.number = num
-        self.row = row
-        self.end_col = end_col
-        self.start_col = end_col - len(num) + 1
-        self.row_len = row_len
-        self.col_len = col_len
-        self.neighbors = self.get_neighbors()
+def get_sum(input):
+    parts = []
+    new_line_flag = False
+    
+    i = 0
+    row_max = len(input) - 1
+    col_max = len(input[i]) - 1
+    while i < len(input):
+        j = 0
+        while j < len(input[i]):
+            cur_num = ''
+            new_line_flag = False
+            while ord(input[i][j]) in range(48, 58):
+                print('breeer')
+                cur_num += input[i][j]
+                #new row
+                if j == col_max and i < row_max:
+                    i += 1
+                    j = 0
+                    new_line_flag = True
+                    break
+                #middle of row
+                elif j < col_max:
+                    j += 1
+                if i >= row_max and j >= col_max:
+                    break
 
-    def get_neighbors(self):
-        n = []
-        print(f"start_col:{self.start_col}, end_col:{self.end_col}")
-        #get top neighbors
-        if self.row > 0:
-            print(68)
-            #top left corner
-            if self.start_col > 0:
-                n.append((self.row - 1, self.start_col - 1))
-            #directly above
-            j = self.start_col
-            while j <= self.end_col:
-                n.append((self.row - 1, j))
-                j += 1
-            #top right corner
-            if self.end_col < self.row_len:
-                n.append((self.row - 1, self.end_col + 1))
-
-        #get inline neighbors
-        if self.start_col > 0 and self.end_col < self.col_len:
-            print(83)
+            if cur_num and new_line_flag:
+                print(cur_num)
+                if search_hit(i-1, col_max-len(cur_num)+1, col_max, input, col_max):
+                    parts.append(int(cur_num))
+            elif cur_num:
+                print(cur_num)
+                if search_hit(i, j-len(cur_num), j-1, input, col_max):
+                    parts.append(int(cur_num))
             
-            n.append((self.row, self.start_col - 1))
-            n.append((self.row, self.end_col + 1))
-        elif self.start_col > 0:
-            print(87)
-            n.append((self.row, self.start_col - 1))
-        elif self.end_col < self.col_len:
-            print(90)
-            n.append((self.row, self.end_col + 1))
-        
-        #get bottom neighbors
-        if self.row < self.row_len:
-            print(f"self.row: {self.row}, self.row_len: {self.row_len}")
-            print(95)
-            #bottom left corner
-            if self.start_col > 0:
-                n.append((self.row + 1, self.start_col - 1))
-            #directly below
-            j = self.start_col
-            while j <= self.end_col:
-                n.append((self.row + 1, j))
-                j += 1
-            #bottom right corner
-            if self.end_col < self.row_len:
-                n.append((self.row + 1, self.end_col + 1))
-        
-        return n
+            j = j + 1 if not new_line_flag else 0
+        i += 1
+
+    parts.sort()
+    print(parts)
+    print("len parts: " + str(len(parts)))
+    return sum(parts)
+
+def search_hit(row, col_start, col_end, input, col_max):
+    print(f"row: {row}, col_start: {col_start}, col_end: {col_end}")
+
+    #first row
+    if row == 0:
+        #first element in matrix
+        if col_start == 0:
+            #check right
+            if is_sym(row, col_end+1, input): return True
+            #check bottom
+            while col_start <= col_end + 1:
+                if is_sym(row+1, col_start, input): return True
+                col_start += 1
+        #last element in first row
+        elif col_end == col_max:
+            #check left
+            if is_sym(row, col_start-1, input): return True
+            #check bottom
+            col_start -= 1
+            while col_start <= col_end:
+                if is_sym(row+1, col_start, input): return True
+                col_start += 1
+        #middle of first row
+        else:
+            #check left
+            if is_sym(row, col_start-1, input): return True
+            #check right
+            if is_sym(row, col_end+1, input): return True
+            #check bottom
+            col_start -= 1
+            while col_start <= col_end + 1:
+                if is_sym(row+1, col_start, input): return True
+                col_start += 1
+
+    #last row
+    elif row == len(input) - 1:
+        #first element of last row
+        if col_start == 0:
+            #check right
+            if is_sym(row, col_end+1, input): return True
+            #check top
+            while col_start <= col_end + 1:
+                if is_sym(row-1, col_start, input): return True
+                col_start += 1
+        #last element in last row
+        elif col_end == col_max:
+            #check left
+            if is_sym(row, col_start-1, input): return True
+            #check top
+            col_start -= 1
+            while col_start <= col_end+1:
+                if is_sym(row-1, col_start, input): return True
+                col_start += 1
+        #middle of last row
+        else:
+            #check left
+            if is_sym(row, col_start-1, input): return True
+            #check right
+            if is_sym(row, col_end+1, input): return True
+            #check top
+            col_start -= 1
+            while col_start <= col_end + 1:
+                if is_sym(row-1, col_start, input): return True
+                col_start += 1
+
+    #middle of matrix
+    else:
+        #left side of middle
+        if col_start == 0:
+            #check right
+            if is_sym(row, col_end+1, input): return True
+            while col_start <= col_end + 1:
+                #check top
+                if is_sym(row-1, col_start, input): return True
+                #check bottom
+                if is_sym(row+1, col_start, input): return True
+                col_start += 1
+        #right side of middle
+        elif col_end == col_max:
+            #check left
+            if is_sym(row, col_start-1, input): return True
+            col_start -= 1
+            while col_start <= col_end:
+                #check top
+                if is_sym(row-1, col_start, input): return True
+                #check bottom
+                if is_sym(row+1, col_start, input): return True
+                col_start += 1
+        #middle of middle:
+        else:
+            #check left
+            if is_sym(row, col_start-1, input): return True
+            #check right
+            if is_sym(row, col_end+1, input): return True
+            col_start -= 1
+            while col_start <= col_end+1:
+                #check top
+                if is_sym(row-1, col_start, input): return True
+                #check bottom
+                if is_sym(row+1, col_start, input): return True
+                col_start += 1
+    
+    return False
 
 
+def is_sym(row, col, input):
+    if input[row][col] != '.' and not input[row][col].isdigit():
+        return True
+    return False
 
 if __name__ == "__main__":
     main()
