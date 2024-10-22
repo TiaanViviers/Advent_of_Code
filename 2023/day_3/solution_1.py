@@ -18,7 +18,6 @@ def get_sum(input):
             cur_num = ''
             new_line_flag = False
             while ord(input[i][j]) in range(48, 58):
-                print('breeer')
                 cur_num += input[i][j]
                 #new row
                 if j == col_max and i < row_max:
@@ -33,25 +32,18 @@ def get_sum(input):
                     break
 
             if cur_num and new_line_flag:
-                print(cur_num)
                 if search_hit(i-1, col_max-len(cur_num)+1, col_max, input, col_max):
                     parts.append(int(cur_num))
             elif cur_num:
-                print(cur_num)
                 if search_hit(i, j-len(cur_num), j-1, input, col_max):
                     parts.append(int(cur_num))
             
             j = j + 1 if not new_line_flag else 0
         i += 1
 
-    parts.sort()
-    print(parts)
-    print("len parts: " + str(len(parts)))
     return sum(parts)
 
 def search_hit(row, col_start, col_end, input, col_max):
-    print(f"row: {row}, col_start: {col_start}, col_end: {col_end}")
-
     #first row
     if row == 0:
         #first element in matrix
