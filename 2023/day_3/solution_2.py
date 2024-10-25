@@ -15,13 +15,13 @@ def get_gear_ratio(row, col, input):
     #find top neighboring nums
     if row > 0:
         top_nums = get_outline_nums(row-1, col, input)
-        if top_nums:
-            nums.append(top_nums)
+        for t in top_nums:
+            nums.append(t)
     #find bottom neighboring nums
     if row < len(input) - 1:
         bottom_nums = get_outline_nums(row+1, col, input)
-        if bottom_nums:
-            nums.append(bottom_nums)
+        for b in bottom_nums:
+            nums.append(b)
     #find inline neigbors
     inline_nums = get_inline_nums(row, col, input)
     for i in inline_nums:
@@ -34,19 +34,39 @@ def get_gear_ratio(row, col, input):
 
 
 def get_outline_nums(row, col, input):
-    cur_num = ''
+    nums = []
+    row_str = input[row]
+    col_len = len(row_str)
 
-    #num is directly above
-    pass
+    # Helper function to expand left and right from a given starting index
+    def expand_number(start):
+        left = start
+        right = start
 
-    #num to left
-    pass
+        # Expand to the left as long as there are digits
+        while left > 0 and row_str[left - 1].isdigit():
+            left -= 1
+        # Expand to the right as long as there are digits
+        while right < col_len - 1 and row_str[right + 1].isdigit():
+            right += 1
+        return row_str[left:right + 1], right
 
-    #num to right
-    pass
+    # Check if the current position is part of a number
+    if row_str[col].isdigit():
+        num, end = expand_number(col)
+        nums.append(int(num))
+        col = end
 
+    # Check left and right neighbors for additional numbers if the center isn't a digit
+    else:
+        if col > 0 and row_str[col - 1].isdigit():
+            num, _ = expand_number(col - 1)
+            nums.append(int(num))
+        if col < col_len - 1 and row_str[col + 1].isdigit():
+            num, _ = expand_number(col + 1)
+            nums.append(int(num))
 
-
+    return nums
 
 def get_inline_nums(row, col, input):
     nums = []
@@ -73,10 +93,23 @@ def get_inline_nums(row, col, input):
 
 
 def main():
-    f = open('subset.txt', 'r')
+    f = open('input.txt', 'r')
     input = f.read().split('\n')
     f.close()
     print(get_sum(input))
 
 if __name__ == "__main__":
     main()
+    """input = [
+        '..234..',
+        '.123...',
+        '...345.',
+        '012....',
+        '612.456'
+    ]
+
+    print(get_outline_nums(0, 3, input))  # Output: [234]
+    print(get_outline_nums(1, 3, input))  # Output: [123]
+    print(get_outline_nums(2, 3, input))  # Output: [345]
+    print(get_outline_nums(3, 4, input))  # Output: []
+    print(get_outline_nums(4, 3, input))  # Output: [12, 456]"""
