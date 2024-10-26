@@ -88,7 +88,6 @@ def get_inline_nums(row, col, input):
     if cur_num:
         nums.append(int(cur_num))
 
-    print(nums)
     return nums
 
 
