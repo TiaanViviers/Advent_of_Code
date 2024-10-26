@@ -7,6 +7,7 @@ def get_points(line):
     win_nums = line[0][7:].split()
     my_nums = line[1].split()
 
+    #determine if number is a winning number
     for i in my_nums:
         if i in win_nums:
             point = increment_point(point)
