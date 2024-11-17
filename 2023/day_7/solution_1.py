@@ -1,7 +1,9 @@
 import sys
+from collections import Counter
 
-def sort(arr):
-    pass
+CARD_RANKS = {'2': 2, '3': 3, '4': 4, '5': 5,
+              '6': 6, '7': 7, '8': 8, '9': 9,
+              'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
 
 
 def get_win(arr):
@@ -36,15 +38,14 @@ def main():
             high_cs.append(temp)
 
     final = []
-    final.extend(sort(high_cs))
-    final.extend(sort(one_ps))
-    final.extend(sort(two_ps))
-    final.extend(sort(three_ks))
-    final.extend(sort(f_houses))
-    final.extend(sort(four_ks))
-    final.extend(sort(five_ks))
+    final.extend(sorted(high_cs))
+    final.extend(sorted(one_ps))
+    final.extend(sorted(two_ps))
+    final.extend(sorted(three_ks))
+    final.extend(sorted(f_houses))
+    final.extend(sorted(four_ks))
+    final.extend(sorted(five_ks))
     print(f"total winnings: {get_win(final)}")
-
 
 
 class Camel_Card:
@@ -54,16 +55,39 @@ class Camel_Card:
         self.hand_class = self.set_class()
 
     def set_class(self):
-        c = self.cards
-        if len(set(c)) == 1:
+        counts = Counter(self.cards).values()
+        counts = sorted(counts, reverse=True)
+
+        if counts == [5]:
             return 'five_k'
-        elif
+        elif counts == [4, 1]:
+            return 'four_k'
+        elif counts == [3, 2]:
+            return 'f_house'
+        elif counts == [3, 1, 1]:
+            return 'three_k'
+        elif counts == [2, 2, 1]:
+            return 'two_p'
+        elif counts == [2, 1, 1, 1]:
+            return 'one_p'
+        elif counts == [1, 1, 1, 1, 1]:
+            return 'high_c'
+        else:
+            print("Class set error")
+    
+    def __lt__(self, other):
+        if self.hand_class != other.hand_class:
+            raise ValueError("Different classes")
+
+        self_ranks = [CARD_RANKS[card] for card in self.cards]
+        other_ranks = [CARD_RANKS[card] for card in other.cards]
+
+        # Compare the ranks one by one according to original order
+        for self_rank, other_rank in zip(self_ranks, other_ranks):
+            if self_rank != other_rank:
+                return self_rank < other_rank
+        return False
+            
         
-
-
-
-
-
-
 if __name__ == "__main__":
     main()
