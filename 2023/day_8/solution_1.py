@@ -10,6 +10,7 @@ def get_map(input):
 
     return map
 
+
 def get_steps(dirs, maps):
     steps = 1
     next_loc = 'AAA'
@@ -24,17 +25,14 @@ def get_steps(dirs, maps):
         dirs = dirs[1:] + dirs[0]
 
 
-
 def main():
     with open(sys.argv[1], 'r') as f:
         input = f.read()
     input = input.split('\n')
-
     dirs = input[0]
     map = get_map(input[2:])
 
     print(f"number of steps: {get_steps(dirs, map)}")
-
 
 
 if __name__ == '__main__':
