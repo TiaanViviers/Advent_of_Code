@@ -1,4 +1,14 @@
 import sys
+import math
+from functools import reduce
+
+def lcm(a, b):
+    return abs(a * b) // math.gcd(a, b)
+
+
+def lcm_multiple(numbers):
+    return reduce(lcm, numbers)
+
 
 def get_map(input):
     map = {}
@@ -11,34 +21,39 @@ def get_map(input):
     return map
 
 
-def get_start_nodes(maps):
-    start_nodes = []
-    for key in maps.keys():
-        if key[2] == 'A':
-            start_nodes.append(key)
-    return start_nodes
-
-
-def ends_Z(nodes):
-    for node in nodes:
-        if node[2] != 'Z':
-            return False
-    return True
+def find_cycle_length(start_node, directions, nodes_map):
+    visited_states = {}
+    current_node = start_node
+    direction_index = 0
+    steps = 0
+    
+    while True:
+        state = (current_node, direction_index)
+        if state in visited_states:
+            # Cycle detected
+            cycle_length = steps - visited_states[state]
+            return cycle_length
+        else:
+            visited_states[state] = steps
+        
+        # Move to the next node
+        dir = directions[direction_index]
+        next_node = nodes_map[current_node][0 if dir == 'L' else 1]
+        
+        current_node = next_node
+        direction_index = (direction_index + 1) % len(directions)
+        steps += 1
 
 
 def get_steps(dirs, maps):
-    steps = 1
-    nodes = get_start_nodes(maps)
+    start_nodes = [node for node in maps.keys() if node.endswith('A')]
+    cycle_lengths = []
 
-    while True:
-        dir = 0 if dirs[0] == "L" else 1
-        
-        for node in range(len(nodes)):
-            nodes[node] = maps.get(nodes[node])[dir]
+    for node in start_nodes:
+        cycle_length = find_cycle_length(node, dirs, maps)
+        cycle_lengths.append(cycle_length)
 
-        if ends_Z(nodes): return steps
-        steps += 1
-        dirs = dirs[1:] + dirs[0]
+    return lcm_multiple(cycle_lengths)
 
 
 def main():
