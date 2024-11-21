@@ -20,16 +20,49 @@ def expand(arr):
     return new_arr
 
 
+def get_galaxy_pos(arr):
+    galaxies = []
+    id = 0
+    for i in range(len(arr)):
+        for j in range(len(arr[i])):
+            if arr[i][j] == '#':
+                galaxies.append(Galaxy(i, j, id))
+                id += 1
+
+    return galaxies
+
+
+def get_distance(galaxies):
+    considered = []
+    dist = 0
+    for i in galaxies:
+        for j in galaxies:
+            if i.id == j.id:
+                continue
+            elif (i.id, j.id) in considered or (j.id, i.id) in considered:
+                continue
+            else:
+                dist += (abs(i.col - j.col) + abs(i.row - j.row))
+                considered.append((i.id, j.id))
+    
+    return dist
+
+
 def main():
     with open(sys.argv[1], 'r') as f:
         input = f.read()
 
     univ = expand(input.split('\n'))
-    g_pos = get_galaxy_pos(univ)
+    galaxies = get_galaxy_pos(univ)
 
-    sum = 0
-    for galaxy in g_pos:
+    print(f"total distance: {get_distance(galaxies)}")
         
+
+class Galaxy():
+    def __init__(self, row, col, id) -> None:
+        self.row = row
+        self.col = col
+        self.id = id
 
 
 if __name__ == '__main__':
