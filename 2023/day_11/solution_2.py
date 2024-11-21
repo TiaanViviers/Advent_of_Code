@@ -2,7 +2,7 @@ import sys
 from itertools import combinations
 
 def get_weight(arr):
-    weight = 2
+    weight = 1_000_000
     #get row weights
     row_w = {}
     for i in range(len(arr)):
