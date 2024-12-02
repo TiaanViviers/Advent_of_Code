@@ -1,2 +1,2 @@
-fn test():
+fn main():
     print("Mojo is 🔥")
