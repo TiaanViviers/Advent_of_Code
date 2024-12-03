@@ -1,5 +1,7 @@
+from sys import argv
+
 fn main() raises:
-    var f_name: String = "input.txt"
+    var f_name: StringRef = argv()[1]
 
     var input = String()
     with open(f_name, 'r') as file:
